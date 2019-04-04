@@ -12,7 +12,7 @@ cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetPostList(id integer primary 
 driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe")   # さっきDLしたchromedriver.exeを使う
 fPath = r"C:\Users\user\Desktop\data"
 # https://teratail.com/questions/131027 permission problem
-targetWord = "アメリカ"
+targetWord = "スタイル抜群"
 
 TOP_URL = "https://www.instagram.com/explore/tags/" + targetWord + "/"
 
