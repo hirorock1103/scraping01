@@ -6,7 +6,7 @@ import sqlite3
 # connect database
 con = sqlite3.connect('sample.db')
 cursor = con.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetList(id integer primary key AUTOINCREMENT, url text, user text)")
+cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary key AUTOINCREMENT, url text, user text)")
 
 # Url and Path Setting
 driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe") # さっきDLしたchromedriver.exeを使う
@@ -107,7 +107,7 @@ if followerButtons.__len__() > 11:
 
     for i in range(RpCount):
 
-        if insertCount > targetUsersFollowersMax:
+        if insertCount >= targetUsersFollowersMax:
             break
 
         moveDistance += 100
@@ -144,9 +144,9 @@ if followerButtons.__len__() > 11:
                         print("(" + str(pos) + ")" + url)
                         # print("(" + str(pos) + ")" + followerButtons[pos].find_element_by_tag_name("a").text)
 
-                        if insertCount > targetUsersFollowersMax:
+                        if insertCount >= targetUsersFollowersMax:
                             continue
-                        cursor.execute("INSERT INTO SampleGetList (url, user) VALUES(?, ?)", (url, targetUser,))
+                        cursor.execute("INSERT INTO SampleGetUserList (url, user) VALUES(?, ?)", (url, targetUser,))
                         insertCount += 1
 
                     con.commit()

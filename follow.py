@@ -14,7 +14,7 @@ userIdList = list()
 likeUserIdList = list()
 unfollowUserIdList = list()
 # get data from file or database
-f = open(fPath + '/new_折り紙_2019-04-03.txt', 'r')
+f = open(fPath + '/new_アメリカ_2019-04-04.txt', 'r')
 line = f.readline()
 while line:
     line = f.readline()

@@ -1,13 +1,18 @@
 from selenium import webdriver # さっきpip install seleniumで入れたseleniumのwebdriverというやつを使う
 import time
 import datetime
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+import sqlite3
+
+# connect database
+con = sqlite3.connect('sample.db')
+cursor = con.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetPostList(id integer primary key AUTOINCREMENT, url text, word text)")
+
 
 driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe")   # さっきDLしたchromedriver.exeを使う
 fPath = r"C:\Users\user\Desktop\data"
 # https://teratail.com/questions/131027 permission problem
-targetWord = "折り紙"
+targetWord = "アメリカ"
 
 TOP_URL = "https://www.instagram.com/explore/tags/" + targetWord + "/"
 
@@ -55,8 +60,10 @@ for i in range(0, 5000):
             # print(tmp[targetNumber + n].get_attribute("href"))
             print("array set:" + "(" + str(n) + ")" + tmp[tmp.__len__() - 1 - targetNumber + n].get_attribute("href"))
             newList.append(tmp[tmp.__len__() - 1 - targetNumber + n].get_attribute("href"))
-        path = fPath + "/new_" + targetWord + "_" + str(datetime.date.today()) + ".txt"
+            cursor.execute("INSERT INTO SampleGetPostList (url, word) VALUES(?, ?)", (newList[n], targetWord,))
 
+        con.commit()
+        path = fPath + "/new_" + targetWord + "_" + str(datetime.date.today()) + ".txt"
         with open(path, mode='a') as f:
             f.write('\n'.join(newList) + '\n')
 
