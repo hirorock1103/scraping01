@@ -18,7 +18,7 @@ cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary 
 cursor.execute("CREATE TABLE IF NOT EXISTS Log(id integer primary key AUTOINCREMENT, log_title text, comment text, createdate text)")
 
 # Url and Path Setting
-driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe") # さっきDLしたchromedriver.exeを使う
+driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe")   # さっきDLしたchromedriver.exeを使う
 TOP_URL = "https://www.instagram.com/accounts/login/?hl=ja&source=auth_switcher"
 fPath = r"C:\Users\user\Desktop\data"
 
@@ -29,7 +29,7 @@ targetUsersFollowersMax = 200     # ユーザーのフォロワー
 
 # getFollower
 targetUser = "_m.shun_"      # user id
-targetUser = "nkm92181"      # user id
+targetUser = "_mstsumoto_piano"      # user id
 
 # other
 logTitle = "getUserList"
@@ -100,7 +100,7 @@ span = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/head
 resultFollowerCount = 0
 spanFollowerCount = str(span.text)
 
-commnt ="文字列「千」が存在するか no : -1  " + str(spanFollowerCount.find("千"))
+commnt = "文字列「千」が存在するか no : -1  " + str(spanFollowerCount.find("千"))
 log(commnt)
 
 if spanFollowerCount.find("千") != -1:
@@ -112,11 +112,11 @@ else:
     spanFollowerCount = spanFollowerCount.replace(",", "")
     resultFollowerCount = int(spanFollowerCount)
 
-commnt ="convert followers to int : " + str(resultFollowerCount)
+commnt = "convert followers to int : " + str(resultFollowerCount)
 log(commnt)
 
 # calc distance by number of followers
-RpCount = int(resultFollowerCount / 10)
+RpCount = int(resultFollowerCount / 2)
 commnt = "roopCount:" + str(RpCount)
 log(commnt)
 insertCount = 0
@@ -216,9 +216,3 @@ if followerButtons.__len__() > 11:
             except:
                 commnt = "Error failed to get last element"
                 log(commnt)
-
-
-
-
-
-

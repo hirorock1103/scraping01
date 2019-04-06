@@ -6,13 +6,19 @@ import sqlite3
 # connect database
 con = sqlite3.connect('sample.db')
 cursor = con.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetPostList(id integer primary key AUTOINCREMENT, url text, word text)")
+query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
+        "id integer primary key AUTOINCREMENT, " \
+        "url text, " \
+        "word text, " \
+        "h_tags text, " \
+        "post_user_id text)"
+cursor.execute(query)
 
 
 driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe")   # さっきDLしたchromedriver.exeを使う
 fPath = r"C:\Users\user\Desktop\data"
 # https://teratail.com/questions/131027 permission problem
-targetWord = "スタイル抜群"
+targetWord = "笑顔"
 
 TOP_URL = "https://www.instagram.com/explore/tags/" + targetWord + "/"
 
@@ -28,7 +34,7 @@ for i in range(0, 5000):
 
     print("count:" + str(i))
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(3)   # 電波状況悪いと長時間waiting必要
+    time.sleep(5)   # 電波状況悪いと長時間waiting必要
     # tmp = driver.find_elements_by_xpath("//a[@href]")
     tmp = driver.find_elements_by_xpath("//a[contains(@href,'%s')]" % "/p/")
     # thanks https://teratail.com/questions/154740
@@ -80,4 +86,3 @@ for i in range(0, 5000):
     # print(s.get_attribute("href"))
 
     print("getCount:" + str(getCount))
-

@@ -3,10 +3,11 @@ import time
 import random
 from selenium.webdriver.common.by import By
 
-driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe") # さっきDLしたchromedriver.exeを使う
+driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe")   # さっきDLしたchromedriver.exeを使う
 
 TOP_URL = "https://www.instagram.com/accounts/login/?hl=ja&source=auth_switcher"
 fPath = r"C:\Users\user\Desktop\data"
+
 randIntFrom = 3
 randIntTo = 5
 
@@ -139,4 +140,3 @@ for item in likeUserIdList:
 
     time.sleep(random.randint(randIntFrom, randIntTo))
     # target.click()
-

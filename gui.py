@@ -6,7 +6,13 @@ import sqlite3
 con = sqlite3.connect('sample.db')
 cursor = con.cursor()
 cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary key AUTOINCREMENT, url text, user text)")
-cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetPostList(id integer primary key AUTOINCREMENT, url text, word text)")
+query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
+        "id integer primary key AUTOINCREMENT, " \
+        "url text, " \
+        "word text, " \
+        "h_tags text, " \
+        "post_user_id text)"
+cursor.execute(query)
 cursor.execute("CREATE TABLE IF NOT EXISTS Log(id integer primary key AUTOINCREMENT, log_title text, comment text, createdate text)")
 
 cursor.execute('SELECT count(*) as count FROM SampleGetUserList')
@@ -29,25 +35,24 @@ def pushed():
     print("pushed")
 
 
-
 # Tkクラス生成
 frm = tkinter.Tk()
 # 画面サイズ
-frm.geometry('700x700')
+frm.geometry('900x700')
 # title
 frm.title("ユーザーリスト")
 
 note = ttk.Notebook(frm)
 
-tabWidth = 680
+tabWidth = 900
 tabHeight = 600
 
 tab_a = tkinter.Frame(note, height=tabHeight, width=tabWidth)
 tab_b = tkinter.Frame(note, height=tabHeight, width=tabWidth)
 tab_c = tkinter.Frame(note, height=tabHeight, width=tabWidth)
 
-note.add(tab_a, text="投稿取得リスト")
-note.add(tab_b, text="ユーザー取得リスト")
+note.add(tab_a, text="ユーザー取得リスト")
+note.add(tab_b, text="投稿取得リスト")
 note.add(tab_c, text="実行ログ")
 
 note.pack()
@@ -66,9 +71,9 @@ tree["columns"] = (1, 2, 3)
 # 表スタイルの設定(headingsはツリー形式ではない、通常の表形式)
 tree["show"] = "headings"
 # 各列の設定(インデックス,オプション(今回は幅を指定))
-tree.column(1, width=40)
+tree.column(1, width=50)
 tree.column(2, width=150)
-tree.column(3, width=400)
+tree.column(3, width=700)
 
 # 各列のヘッダー設定(インデックス,テキスト)
 tree.heading(1, text="№")
@@ -93,23 +98,30 @@ label.pack()
 tree = ttk.Treeview(tab_b)
 
 # 列インデックスの作成
-tree["columns"] = (1, 2, 3)
+tree["columns"] = (1, 2, 3, 4, 5)
 # 表スタイルの設定(headingsはツリー形式ではない、通常の表形式)
 tree["show"] = "headings"
 # 各列の設定(インデックス,オプション(今回は幅を指定))
-tree.column(1, width=40)
-tree.column(2, width=150)
-tree.column(3, width=400)
+tree.column(1, width=50)
+tree.column(2, width=60)
+tree.column(3, width=240)
+tree.column(4, width=100)
+tree.column(5, width=450)
 
 # 各列のヘッダー設定(インデックス,テキスト)
 tree.heading(1, text="№")
-tree.heading(2, text="キーワード")
+tree.heading(2, text="word")
 tree.heading(3, text="URL")
+tree.heading(4, text="user")
+tree.heading(5, text="tag")
 
 # Data set
 cursor.execute('SELECT * FROM SampleGetPostList')
 for row in cursor:
-    tree.insert("", "end", values=(row[0], row[2], row[1]))
+    try:
+        tree.insert("", "end", values=(row[0], row[2], row[1], row[4], row[3]))
+    except:
+        print("err")
 con.commit()
 # ツリービューの配置
 tree.pack()
@@ -140,7 +152,10 @@ tree.heading(3, text="datetime")
 # Data set
 cursor.execute('SELECT * FROM Log')
 for row in cursor:
-    tree.insert("", "end", values=(row[0], row[2], row[3]))
+    try:
+        tree.insert("", "end", values=(row[0], row[2], row[3]))
+    except:
+        print("err")
 con.commit()
 # ツリービューの配置
 tree.pack()
@@ -149,4 +164,3 @@ tree.pack()
 button = tkinter.Button(frm, text="情報更新", command=pushed)
 
 frm.mainloop()
-
