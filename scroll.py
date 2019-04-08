@@ -10,6 +10,7 @@ query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
         "id integer primary key AUTOINCREMENT, " \
         "url text, " \
         "word text, " \
+        "post_date text, " \
         "h_tags text, " \
         "post_user_id text)"
 cursor.execute(query)
@@ -18,7 +19,7 @@ cursor.execute(query)
 driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe")   # さっきDLしたchromedriver.exeを使う
 fPath = r"C:\Users\user\Desktop\data"
 # https://teratail.com/questions/131027 permission problem
-targetWord = "美人"
+targetWord = "アイドル"
 
 TOP_URL = "https://www.instagram.com/explore/tags/" + targetWord + "/"
 

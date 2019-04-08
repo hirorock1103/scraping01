@@ -12,6 +12,7 @@ query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
         "id integer primary key AUTOINCREMENT, " \
         "url text, " \
         "word text, " \
+        "post_date text, " \
         "h_tags text, " \
         "post_user_id text)"
 cursor.execute(query)
@@ -72,6 +73,8 @@ for row in cursor:
         elmDiv = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/article/div[2]')
         elmSpan = elmDiv.find_elements_by_tag_name("span")
         aTags = elmDiv.find_elements_by_tag_name("a")
+        timeTags = elmDiv.find_element_by_tag_name("time")
+
         for link in aTags:
             if "#" in link.text:
                 hashTags.append(link.text)
@@ -85,8 +88,8 @@ for row in cursor:
             print(dataId)
             print(user)
             cursor2 = con.cursor()
-            query = "update SampleGetPostList SET h_tags = ?, post_user_id = ? WHERE id = ?"
-            args = (tags, userTag.text, dataId)
+            query = "update SampleGetPostList SET h_tags = ?, post_user_id = ?, post_date = ? WHERE id = ?"
+            args = (tags, userTag.text, timeTags.text, dataId)
             cursor2.execute(query, args)
             con.commit()
 

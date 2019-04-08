@@ -10,6 +10,7 @@ query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
         "id integer primary key AUTOINCREMENT, " \
         "url text, " \
         "word text, " \
+        "post_date text, " \
         "h_tags text, " \
         "post_user_id text)"
 cursor.execute(query)
