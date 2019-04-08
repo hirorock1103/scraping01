@@ -18,7 +18,7 @@ cursor.execute(query)
 driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe")   # さっきDLしたchromedriver.exeを使う
 fPath = r"C:\Users\user\Desktop\data"
 # https://teratail.com/questions/131027 permission problem
-targetWord = "笑顔"
+targetWord = "美人"
 
 TOP_URL = "https://www.instagram.com/explore/tags/" + targetWord + "/"
 
@@ -30,11 +30,11 @@ time.sleep(5)
 lastUrl = ""
 # last urlが変わり続ける限り取得する
 getCount = 0
-for i in range(0, 5000):
+for i in range(0, 1000):
 
     print("count:" + str(i))
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(5)   # 電波状況悪いと長時間waiting必要
+    time.sleep(15)   # 電波状況悪いと長時間waiting必要
     # tmp = driver.find_elements_by_xpath("//a[@href]")
     tmp = driver.find_elements_by_xpath("//a[contains(@href,'%s')]" % "/p/")
     # thanks https://teratail.com/questions/154740

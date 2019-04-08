@@ -50,6 +50,17 @@ for row in cursor:
 
     print("\n\n -search start- " + url)
     driver.get(url)
+
+    try:
+        errormsg = driver.find_element_by_xpath("/html/body/div/div[1]/div/div/h2")
+        print(errormsg.text)
+        if errormsg.text == "このページはご利用いただけません。":
+            print("ページが存在しないためcontinue")
+            time.sleep(1)
+            continue
+    except:
+        print("通常")
+
     time.sleep(2)
     if mode != "VIEW":
 
@@ -78,3 +89,4 @@ for row in cursor:
             args = (tags, userTag.text, dataId)
             cursor2.execute(query, args)
             con.commit()
+
