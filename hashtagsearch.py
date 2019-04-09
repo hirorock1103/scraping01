@@ -36,13 +36,13 @@ driver.set_page_load_timeout(600)   # ページロード最大600秒
 
 # start from database
 cursor.execute('SELECT * FROM SampleGetPostList ORDER BY id ASC')
-postNumberOfResult = 0
+
 for row in cursor:
 
     dataId = (row[0])
     url = (row[1])
     title = (row[2])
-    dataUserId = (row[4])
+    dataUserId = (row[5])
 
     print(dataUserId)
     if dataUserId is not None:
@@ -67,7 +67,6 @@ for row in cursor:
 
         # User を取得
         userTag = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/article/header/div[2]/div[1]/div[1]/h2/a')
-        print(userTag.text)
         # ハッシュタグを取得
         hashTags = []
         elmDiv = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/article/div[2]')
@@ -84,9 +83,9 @@ for row in cursor:
             tags = ",".join(hashTags)
             dataId = dataId
             user = userTag.text
-            print(tags)
-            print(dataId)
-            print(user)
+            print("tags:" + tags)
+            print("dataId:" + str(dataId))
+            print("user:" + user)
             cursor2 = con.cursor()
             query = "update SampleGetPostList SET h_tags = ?, post_user_id = ?, post_date = ? WHERE id = ?"
             args = (tags, userTag.text, timeTags.text, dataId)

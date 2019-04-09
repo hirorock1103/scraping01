@@ -1,3 +1,4 @@
+
 from tkinter import ttk
 from tkinter import *
 import tkinter as tk
@@ -15,55 +16,120 @@ query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
         "post_user_id text)"
 cursor.execute(query)
 
+
+# ****** SQL *******
 cursor.execute('SELECT count(*) FROM SampleGetPostList')
 postNumberOfResult = 0
 for row in cursor:
     postNumberOfResult = (row[0])
 
+
+# ****** root *******
 win = tk.Tk()
 win.geometry('1000x500')
 win.resizable(width=0, height=0)
 
-title = "投稿リスト 取得件数(" + str(postNumberOfResult) + ")"
-label = tk.Label(win, text=title)
+# ****** FRAME ******
+topFrame = Frame(win)
+bottomFrame = Frame(win)
+topFrame.pack(anchor=tk.W)
+bottomFrame.pack(side=BOTTOM)
 
-label.pack(padx=5, pady=5, anchor=tk.W)
+# ****** widget *******
+titleBuff = StringVar()
+titleBuff.set("投稿リスト 取得件数(" + str(postNumberOfResult) + "件)")
+label0 = tk.Label(topFrame, textvariable=titleBuff)
+
+label0.pack(padx=5, pady=5, anchor=tk.W)
 
 title = "keyword"
-label = tk.Label(win, text=title)
-label.pack(padx=5, pady=0, anchor=tk.W)
+label1 = tk.Label(topFrame, text=title)
+label1.pack(padx=5, pady=0, anchor=tk.W)
 
 form1 = StringVar()
-entry = Entry(win, textvariable=form1).pack(padx=8, pady=5, anchor=tk.W)
+entry = Entry(topFrame, textvariable=form1).pack(padx=8, pady=5, anchor=tk.W)
 
 title = "#hashtag"
-label = tk.Label(win, text=title)
-label.pack(padx=5, pady=0, anchor=tk.W)
+label2 = tk.Label(topFrame, text=title)
+label2.pack(padx=5, pady=0, anchor=tk.W)
 
 form2 = StringVar()
-entry = Entry(win, textvariable=form2).pack(padx=8, pady=5, anchor=tk.W)
+entry = Entry(topFrame, textvariable=form2).pack(padx=8, pady=5, anchor=tk.W)
 
 
 # Button 1
 def button1_clicked():
-    print(form1.get())
-    print(form2.get())
-    win.mainloop()
+
+    formWordKeyWord = form1.get()
+    formWordHashTag = form2.get()
+
+    query = ""
+    query2 = ""
+    args = ""
+    if formWordKeyWord == "" and formWordHashTag == "":
+        query = "SELECT count(*) FROM SampleGetPostList"
+        query2 = "SELECT * FROM SampleGetPostList"
+        cursor.execute(query)
+
+    elif formWordKeyWord != "" and formWordHashTag == "":
+        query = "SELECT count(*) FROM SampleGetPostList" + " WHERE word like ?"
+        query2 = "SELECT * FROM SampleGetPostList" + " WHERE word like ?"
+        args = ("%" + formWordKeyWord + "%",)
+        cursor.execute(query, args)
+
+    elif formWordKeyWord == "" and formWordHashTag != "":
+        query = "SELECT count(*) FROM SampleGetPostList" + " WHERE h_tags like ?"
+        query2 = "SELECT * FROM SampleGetPostList" + " WHERE h_tags like ?"
+        args = ("%" + formWordHashTag + "%",)
+        cursor.execute(query, args)
+
+    else:
+        query = "SELECT count(*) FROM SampleGetPostList" + " WHERE word like ? AND h_tags like ?"
+        query2 = "SELECT * FROM SampleGetPostList" + " WHERE word like ? AND h_tags like ?"
+        args = ("%" + formWordKeyWord + "%", "%" + formWordHashTag + "%",)
+        cursor.execute(query, args)
+
+    for row in cursor:
+        number = (row[0])
+    titleBuff.set("投稿リスト 取得件数(" + str(number) + "件)")
+
+    if args != "":
+        cursor.execute(query2, args)
+    else:
+        cursor.execute(query2)
+
+    # table reflesh
+    for i in tree.get_children():
+        tree.delete(i)
+
+
+    for row in cursor:
+        try:
+            dataId = row[0]
+            word = row[1]
+            postDate = row[2]
+            url = row[3]
+            user = row[4]
+            tag = row[5]
+            tree.insert("", "end", values=(dataId, word, postDate, url, user, tag))
+        except:
+            print("err")
+
+    con.commit()
 
 
 button1 = tk.Button(
-    win,
+    topFrame,
     text='検索',
     command=button1_clicked)
 
 button1.pack(padx=5, pady=5, anchor=tk.W)
 
 
-# #####  MAKE TABLE  #####
-tree = ttk.Treeview(win, selectmode='browse')
+# ****** TABLE *******
+tree = ttk.Treeview(bottomFrame, selectmode='browse')
+vsb = ttk.Scrollbar(bottomFrame, orient="vertical", command=tree.yview)
 tree.pack(side='left')
-
-vsb = ttk.Scrollbar(win, orient="vertical", command=tree.yview)
 vsb.pack(side='right', fill='y')
 
 tree.configure(yscrollcommand=vsb.set)
@@ -79,7 +145,6 @@ tree.column(4, width=60)
 tree.column(5, width=560)
 tree.column(6, width=150)
 
-
 # 各列のヘッダー設定(インデックス,テキスト)
 tree.heading(1, text="№")
 tree.heading(2, text="url")
@@ -92,17 +157,16 @@ tree.heading(6, text="user")
 cursor.execute('SELECT * FROM SampleGetPostList')
 for row in cursor:
     try:
-
         dataId = row[0]
         word = row[1]
         postDate = row[2]
         url = row[3]
         user = row[4]
         tag = row[5]
-
         tree.insert("", "end", values=(dataId, word, postDate, url, user, tag))
     except:
         print("err")
+
 con.commit()
 
 win.mainloop()
