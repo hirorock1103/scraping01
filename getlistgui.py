@@ -9,7 +9,7 @@ import webbrowser
 # connect database
 con = sqlite3.connect('sample.db')
 cursor = con.cursor()
-query = "CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary key AUTOINCREMENT, url text, user text)"
+query = "CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary key AUTOINCREMENT, url text, user text, createdate text)"
 cursor.execute(query)
 
 
@@ -103,8 +103,9 @@ def button1_clicked():
             dataId = row[0]
             userId = row[2]
             follower = row[1]
+            create = row[3]
 
-            tree.insert("", "end", values=(dataId, userId, follower))
+            tree.insert("", "end", values=(dataId, userId, follower, create))
         except:
             print("err")
 
@@ -129,18 +130,20 @@ tree.configure(yscrollcommand=vsb.set)
 
 
 # 列インデックスの作成
-tree["columns"] = (1, 2, 3)
+tree["columns"] = (1, 2, 3, 4)
 tree['show'] = 'headings'
 
 # 各列の設定(インデックス,オプション(今回は幅を指定))
 tree.column(1, width=50)
 tree.column(2, width=150)
 tree.column(3, width=700)
+tree.column(4, width=120)
 
 # 各列のヘッダー設定(インデックス,テキスト)
 tree.heading(1, text="№")
 tree.heading(2, text="User")
 tree.heading(3, text="URL")
+tree.heading(4, text="Date")
 
 
 def callback(event):
@@ -160,8 +163,9 @@ for row in cursor:
         dataId = row[0]
         userId = row[2]
         follower = row[1]
+        create = row[3]
 
-        tree.insert("", "end", values=(dataId, userId, follower))
+        tree.insert("", "end", values=(dataId, userId, follower, create))
     except:
         print("err")
 

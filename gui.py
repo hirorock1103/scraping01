@@ -5,14 +5,16 @@ import sqlite3
 # connect database
 con = sqlite3.connect('sample.db')
 cursor = con.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary key AUTOINCREMENT, url text, user text)")
+cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary key AUTOINCREMENT, url text, user text, createdate text)")
 query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
         "id integer primary key AUTOINCREMENT, " \
         "url text, " \
         "word text, " \
         "post_date text, " \
         "h_tags text, " \
-        "post_user_id text)"
+        "post_user_id text, " \
+        "converted_post_date text, " \
+        "createdate text)"
 cursor.execute(query)
 cursor.execute("CREATE TABLE IF NOT EXISTS Log(id integer primary key AUTOINCREMENT, log_title text, comment text, createdate text)")
 

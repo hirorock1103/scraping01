@@ -15,7 +15,9 @@ query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
         "word text, " \
         "post_date text, " \
         "h_tags text, " \
-        "post_user_id text)"
+        "post_user_id text, " \
+        "converted_post_date text, " \
+        "createdate text)"
 cursor.execute(query)
 
 
@@ -112,7 +114,10 @@ def button1_clicked():
             url = row[3]
             user = row[4]
             tag = row[5]
-            tree.insert("", "end", values=(dataId, word, postDate, url, user, tag))
+            create = row[7]
+            converted_post_date = row[6]
+
+            tree.insert("", "end", values=(dataId, word, postDate, url, user, tag, create, converted_post_date))
         except:
             print("err")
 
@@ -136,7 +141,7 @@ vsb.pack(side='right', fill='y')
 
 tree.configure(yscrollcommand=vsb.set)
 
-tree["columns"] = (1, 2, 3, 4, 5, 6)
+tree["columns"] = (1, 2, 3, 4, 5, 6, 7, 8)
 tree['show'] = 'headings'
 
 # 各列の設定(インデックス,オプション(今回は幅を指定))
@@ -144,8 +149,10 @@ tree.column(1, width=40)
 tree.column(2, width=60)
 tree.column(3, width=60)
 tree.column(4, width=80)
-tree.column(5, width=760)
+tree.column(5, width=520)
 tree.column(6, width=150)
+tree.column(7, width=120)
+tree.column(8, width=120)
 
 # 各列のヘッダー設定(インデックス,テキスト)
 tree.heading(1, text="№")
@@ -154,6 +161,8 @@ tree.heading(3, text="word")
 tree.heading(4, text="post")
 tree.heading(5, text="#hash")
 tree.heading(6, text="user")
+tree.heading(7, text="Date")
+tree.heading(8, text="post")
 
 
 def callback(event):
@@ -176,8 +185,10 @@ for row in cursor:
         url = row[3]
         user = row[4]
         tag = row[5]
+        create = row[7]
+        converted_post_date = row[6]
 
-        tree.insert("", "end", values=(dataId, word, postDate, url, user, tag))
+        tree.insert("", "end", values=(dataId, word, postDate, url, user, tag, create, converted_post_date))
     except:
         print("err")
 

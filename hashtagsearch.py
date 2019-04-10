@@ -1,6 +1,7 @@
 from selenium import webdriver    # さっきpip install seleniumで入れたseleniumのwebdriverというやつを使う
 import time
 import sqlite3
+from datetime import datetime, date, timedelta
 
 # 投稿LISTに対してuser名とハッシュタグをセットしていく
 mode = ""
@@ -14,7 +15,9 @@ query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
         "word text, " \
         "post_date text, " \
         "h_tags text, " \
-        "post_user_id text)"
+        "post_user_id text, " \
+        "converted_post_date text, " \
+        "createdate text)"
 cursor.execute(query)
 
 TOP_URL = "https://www.instagram.com"
@@ -33,6 +36,43 @@ driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe"
 driver.set_page_load_timeout(600)   # ページロード最大600秒
 # driver.get(TOP_URL)    # chrome起動→ログインページに移動
 # time.sleep(2)
+
+
+def convert_str_to_date(str_date):
+    print(str_date)
+    today = datetime.today()
+    ansDate = ""
+    # 時間前 / 分前　→　todayとして登録
+    if str_date.find("時間前") >= 0 or str_date.find("分前") >= 0:
+        print("「時間前、分前」が含まれる")
+        targetDate = today
+        ansDate = datetime.strftime(targetDate, '%Y-%m-%d')
+
+    # 日前　→　指定日で計算
+    elif str_date.find("日前") >= 0:
+        count = int(str_date[0:1])
+        print("「日前」が含まれる")
+        targetDate = today - timedelta(days=count)
+        ansDate = datetime.strftime(targetDate, '%Y-%m-%d')
+
+    # 〇年〇月〇日　→　指定年月日
+    elif str_date.find("年") >= 0 and str_date.find("月") >= 0 and str_date.find("日") >= 0:
+        print("指定年月日" + str_date)
+        date_string = str_date
+        print("date_string" + date_string)
+        targetDate = datetime.strptime(date_string, '%Y年%m月%d日')
+        ansDate = datetime.strftime(targetDate, '%Y-%m-%d')
+
+    # 〇月〇日　→ 今年の指定年月日
+    elif str_date.find("月") >= 0 and str_date.find("日") >= 0:
+        print("今年の指定年月日" + str_date)
+        date_string = str(today.year) + "年" + str_date
+        print("date_string" + date_string)
+        targetDate = datetime.strptime(date_string, '%Y年%m月%d日')
+        ansDate = datetime.strftime(targetDate, '%Y-%m-%d')
+
+    return ansDate
+
 
 # start from database
 cursor.execute('SELECT * FROM SampleGetPostList ORDER BY id ASC')
@@ -73,6 +113,8 @@ for row in cursor:
         elmSpan = elmDiv.find_elements_by_tag_name("span")
         aTags = elmDiv.find_elements_by_tag_name("a")
         timeTags = elmDiv.find_element_by_tag_name("time")
+        convertedDate = convert_str_to_date(timeTags.text)
+        print("convertedDate:" + convertedDate)
 
         for link in aTags:
             if "#" in link.text:
@@ -87,8 +129,8 @@ for row in cursor:
             print("dataId:" + str(dataId))
             print("user:" + user)
             cursor2 = con.cursor()
-            query = "update SampleGetPostList SET h_tags = ?, post_user_id = ?, post_date = ? WHERE id = ?"
-            args = (tags, userTag.text, timeTags.text, dataId)
+            query = "update SampleGetPostList SET h_tags = ?, post_user_id = ?, post_date = ?, converted_post_date = ? WHERE id = ?"
+            args = (tags, userTag.text, timeTags.text, convertedDate, dataId)
             cursor2.execute(query, args)
             con.commit()
 

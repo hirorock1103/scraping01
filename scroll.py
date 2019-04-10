@@ -12,13 +12,15 @@ query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
         "word text, " \
         "post_date text, " \
         "h_tags text, " \
-        "post_user_id text)"
+        "post_user_id text, " \
+        "converted_post_date text, " \
+        "createdate text)"
 cursor.execute(query)
 
 driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe")   # さっきDLしたchromedriver.exeを使う
 fPath = r"C:\Users\user\Desktop\data"
 # https://teratail.com/questions/131027 permission problem
-targetWord = "ミスキャンパス"
+targetWord = "ブランコ"
 
 TOP_URL = "https://www.instagram.com/explore/tags/" + targetWord + "/"
 
@@ -66,7 +68,7 @@ for i in range(0, 1000):
             # print(tmp[targetNumber + n].get_attribute("href"))
             print("array set:" + "(" + str(n) + ")" + tmp[tmp.__len__() - 1 - targetNumber + n].get_attribute("href"))
             newList.append(tmp[tmp.__len__() - 1 - targetNumber + n].get_attribute("href"))
-            cursor.execute("INSERT INTO SampleGetPostList (url, word) VALUES(?, ?)", (newList[n], targetWord,))
+            cursor.execute("INSERT INTO SampleGetPostList (url, word, createdate) VALUES(?, ?, datetime('now', 'localtime'))", (newList[n], targetWord,))
 
         con.commit()
         path = fPath + "/new_" + targetWord + "_" + str(datetime.date.today()) + ".txt"

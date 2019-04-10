@@ -14,7 +14,7 @@ def log(comment):
 # connect database
 con = sqlite3.connect('sample.db')
 cursor = con.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary key AUTOINCREMENT, url text, user text)")
+cursor.execute("CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary key AUTOINCREMENT, url text, user text, createdate text)")
 cursor.execute("CREATE TABLE IF NOT EXISTS Log(id integer primary key AUTOINCREMENT, log_title text, comment text, createdate text)")
 
 # Url and Path Setting
@@ -29,7 +29,7 @@ targetUsersFollowersMax = 200     # ユーザーのフォロワー
 
 # getFollower
 targetUser = "_m.shun_"      # user id
-targetUser = "rinkoroom"      # user id
+targetUser = "penguinmobile8"      # user id
 
 # other
 logTitle = "getUserList"
@@ -196,7 +196,7 @@ if followerButtons.__len__() > 11:
                         previousListLastVal = url
 
                         # print("(" + str(pos) + ")" + url)
-                        cursor.execute("INSERT INTO SampleGetUserList (url, user) VALUES(?, ?)", (url, targetUser,))
+                        cursor.execute("INSERT INTO SampleGetUserList (url, user, createdate) VALUES(?, ?, datetime('now', 'localtime'))", (url, targetUser,))
                         insertCount += 1
                         dbInsert += 1
 
