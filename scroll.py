@@ -15,11 +15,10 @@ query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
         "post_user_id text)"
 cursor.execute(query)
 
-
 driver = webdriver.Chrome(r"C:\Users\user\Desktop\chromedriver/chromedriver.exe")   # さっきDLしたchromedriver.exeを使う
 fPath = r"C:\Users\user\Desktop\data"
 # https://teratail.com/questions/131027 permission problem
-targetWord = "絶景"
+targetWord = "ミスキャンパス"
 
 TOP_URL = "https://www.instagram.com/explore/tags/" + targetWord + "/"
 

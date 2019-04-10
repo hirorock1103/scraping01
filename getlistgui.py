@@ -9,18 +9,12 @@ import webbrowser
 # connect database
 con = sqlite3.connect('sample.db')
 cursor = con.cursor()
-query = "CREATE TABLE IF NOT EXISTS SampleGetPostList(" \
-        "id integer primary key AUTOINCREMENT, " \
-        "url text, " \
-        "word text, " \
-        "post_date text, " \
-        "h_tags text, " \
-        "post_user_id text)"
+query = "CREATE TABLE IF NOT EXISTS SampleGetUserList(id integer primary key AUTOINCREMENT, url text, user text)"
 cursor.execute(query)
 
 
 # ****** SQL *******
-cursor.execute('SELECT count(*) FROM SampleGetPostList')
+cursor.execute('SELECT count(*) FROM SampleGetUserList')
 postNumberOfResult = 0
 for row in cursor:
     postNumberOfResult = (row[0])
@@ -39,19 +33,19 @@ bottomFrame.pack(padx=10, side=LEFT)
 
 # ****** widget *******
 titleBuff = StringVar()
-titleBuff.set("投稿リスト 取得件数(" + str(postNumberOfResult) + "件)")
+titleBuff.set("USERリスト 取得件数(" + str(postNumberOfResult) + "件)")
 label0 = tk.Label(topFrame, textvariable=titleBuff)
 
 label0.pack(padx=5, pady=5, anchor=tk.W)
 
-title = "keyword"
+title = "user"
 label1 = tk.Label(topFrame, text=title)
 label1.pack(padx=5, pady=0, anchor=tk.W, side=LEFT)
 
 form1 = StringVar()
 entry = Entry(topFrame, textvariable=form1).pack(padx=8, pady=5, anchor=tk.W, side=LEFT)
 
-title = "#hashtag"
+title = "url"
 label2 = tk.Label(topFrame, text=title)
 label2.pack(padx=5, pady=0, anchor=tk.W, side=LEFT)
 
@@ -62,33 +56,33 @@ entry = Entry(topFrame, textvariable=form2).pack(padx=8, pady=5, anchor=tk.W, si
 # Button 1
 def button1_clicked():
 
-    formWordKeyWord = form1.get()
-    formWordHashTag = form2.get()
+    formWordUser = form1.get()
+    formWordFollower = form2.get()
 
     query = ""
     query2 = ""
     args = ""
-    if formWordKeyWord == "" and formWordHashTag == "":
-        query = "SELECT count(*) FROM SampleGetPostList"
-        query2 = "SELECT * FROM SampleGetPostList ORDER BY id ASC"
+    if formWordUser == "" and formWordFollower == "":
+        query = "SELECT count(*) FROM SampleGetUserList"
+        query2 = "SELECT * FROM SampleGetUserList ORDER BY id ASC"
         cursor.execute(query)
 
-    elif formWordKeyWord != "" and formWordHashTag == "":
-        query = "SELECT count(*) FROM SampleGetPostList" + " WHERE word like ?"
-        query2 = "SELECT * FROM SampleGetPostList" + " WHERE word like ?  ORDER BY id ASC"
-        args = ("%" + formWordKeyWord + "%",)
+    elif formWordUser != "" and formWordFollower == "":
+        query = "SELECT count(*) FROM SampleGetUserList" + " WHERE user like ?"
+        query2 = "SELECT * FROM SampleGetUserList" + " WHERE user like ?  ORDER BY id ASC"
+        args = ("%" + formWordUser + "%",)
         cursor.execute(query, args)
 
-    elif formWordKeyWord == "" and formWordHashTag != "":
-        query = "SELECT count(*) FROM SampleGetPostList" + " WHERE h_tags like ?"
-        query2 = "SELECT * FROM SampleGetPostList" + " WHERE h_tags like ?  ORDER BY id ASC"
-        args = ("%" + formWordHashTag + "%",)
+    elif formWordUser == "" and formWordFollower != "":
+        query = "SELECT count(*) FROM SampleGetUserList" + " WHERE url like ?"
+        query2 = "SELECT * FROM SampleGetUserList" + " WHERE url like ?  ORDER BY id ASC"
+        args = ("%" + formWordFollower + "%",)
         cursor.execute(query, args)
 
     else:
-        query = "SELECT count(*) FROM SampleGetPostList" + " WHERE word like ? AND h_tags like ?"
-        query2 = "SELECT * FROM SampleGetPostList" + " WHERE word like ? AND h_tags like ?  ORDER BY id ASC"
-        args = ("%" + formWordKeyWord + "%", "%" + formWordHashTag + "%",)
+        query = "SELECT count(*) FROM SampleGetUserList" + " WHERE user like ? AND url like ?"
+        query2 = "SELECT * FROM SampleGetUserList" + " WHERE user like ? AND url like ?  ORDER BY id ASC"
+        args = ("%" + formWordUser + "%", "%" + formWordFollower + "%",)
         cursor.execute(query, args)
 
     for row in cursor:
@@ -107,17 +101,14 @@ def button1_clicked():
     for row in cursor:
         try:
             dataId = row[0]
-            word = row[1]
-            postDate = row[2]
-            url = row[3]
-            user = row[4]
-            tag = row[5]
-            tree.insert("", "end", values=(dataId, word, postDate, url, user, tag))
+            userId = row[2]
+            follower = row[1]
+
+            tree.insert("", "end", values=(dataId, userId, follower))
         except:
             print("err")
 
     con.commit()
-
 
 
 button1 = tk.Button(
@@ -136,48 +127,41 @@ vsb.pack(side='right', fill='y')
 
 tree.configure(yscrollcommand=vsb.set)
 
-tree["columns"] = (1, 2, 3, 4, 5, 6)
+
+# 列インデックスの作成
+tree["columns"] = (1, 2, 3)
 tree['show'] = 'headings'
 
 # 各列の設定(インデックス,オプション(今回は幅を指定))
-tree.column(1, width=40)
-tree.column(2, width=60)
-tree.column(3, width=60)
-tree.column(4, width=80)
-tree.column(5, width=760)
-tree.column(6, width=150)
+tree.column(1, width=50)
+tree.column(2, width=150)
+tree.column(3, width=700)
 
 # 各列のヘッダー設定(インデックス,テキスト)
 tree.heading(1, text="№")
-tree.heading(2, text="url")
-tree.heading(3, text="word")
-tree.heading(4, text="post")
-tree.heading(5, text="#hash")
-tree.heading(6, text="user")
+tree.heading(2, text="User")
+tree.heading(3, text="URL")
 
 
 def callback(event):
     url = ""
     for i in tree.selection():
-        print(tree.item(i)['values'][1])
-        url = tree.item(i)['values'][1]
+        print(tree.item(i))
+        print(tree.item(i)['values'][2])
+        url = tree.item(i)['values'][2]
         webbrowser.open_new(url)
-
 
 tree.bind("<Double-1>", callback)
 
 # Data set
-cursor.execute('SELECT * FROM SampleGetPostList  ORDER BY id ASC')
+cursor.execute('SELECT * FROM SampleGetUserList ORDER BY id ASC')
 for row in cursor:
     try:
         dataId = row[0]
-        word = row[1]
-        postDate = row[2]
-        url = row[3]
-        user = row[4]
-        tag = row[5]
+        userId = row[2]
+        follower = row[1]
 
-        tree.insert("", "end", values=(dataId, word, postDate, url, user, tag))
+        tree.insert("", "end", values=(dataId, userId, follower))
     except:
         print("err")
 

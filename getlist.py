@@ -29,7 +29,7 @@ targetUsersFollowersMax = 200     # ユーザーのフォロワー
 
 # getFollower
 targetUser = "_m.shun_"      # user id
-targetUser = "_mstsumoto_piano"      # user id
+targetUser = "rinkoroom"      # user id
 
 # other
 logTitle = "getUserList"
