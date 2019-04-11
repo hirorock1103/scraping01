@@ -4,7 +4,7 @@ from tkinter import *
 import tkinter as tk
 import sqlite3
 import webbrowser
-
+import datetime
 
 # connect database
 con = sqlite3.connect('sample.db')
@@ -35,8 +35,10 @@ win.resizable(width=0, height=0)
 
 # ****** FRAME ******
 topFrame = Frame(win)
+centerFrame = Frame(win)
 bottomFrame = Frame(win)
 topFrame.pack(anchor=tk.W)
+centerFrame.pack(anchor=tk.W)
 bottomFrame.pack(padx=10, side=LEFT)
 
 # ****** widget *******
@@ -60,9 +62,14 @@ label2.pack(padx=5, pady=0, anchor=tk.W, side=LEFT)
 form2 = StringVar()
 entry = Entry(topFrame, textvariable=form2).pack(padx=8, pady=5, anchor=tk.W, side=LEFT)
 
+# global
+query_pref = ""
+
 
 # Button 1
 def button1_clicked():
+
+    form3.set(create_file_title())
 
     formWordKeyWord = form1.get()
     formWordHashTag = form2.get()
@@ -124,13 +131,91 @@ def button1_clicked():
     con.commit()
 
 
-
 button1 = tk.Button(
     topFrame,
     text='検索',
     command=button1_clicked)
 
 button1.pack(padx=5, pady=5, anchor=tk.W)
+
+
+# Button2 clicked
+def button2_clicked():
+    fPath = r"C:\Users\user\Desktop\data"
+    filePath = fPath + "/" + form3.get()
+
+    formWordKeyWord = form1.get()
+    formWordHashTag = form2.get()
+
+    query2 = ""
+    args = ""
+    if formWordKeyWord == "" and formWordHashTag == "":
+        query2 = "SELECT * FROM SampleGetPostList ORDER BY id ASC"
+
+    elif formWordKeyWord != "" and formWordHashTag == "":
+        query2 = "SELECT * FROM SampleGetPostList" + " WHERE word like ?  ORDER BY id ASC"
+        args = ("%" + formWordKeyWord + "%",)
+
+    elif formWordKeyWord == "" and formWordHashTag != "":
+        query2 = "SELECT * FROM SampleGetPostList" + " WHERE h_tags like ?  ORDER BY id ASC"
+        args = ("%" + formWordHashTag + "%",)
+
+    else:
+        query2 = "SELECT * FROM SampleGetPostList" + " WHERE word like ? AND h_tags like ?  ORDER BY id ASC"
+        args = ("%" + formWordKeyWord + "%", "%" + formWordHashTag + "%",)
+
+    if args != "":
+        cursor.execute(query2, args)
+    else:
+        cursor.execute(query2)
+
+    for row in cursor:
+        try:
+            url = row[1]
+            print(url)
+            print(filePath)
+            with open(filePath, mode='a') as f:
+                f.write(url + "\n")
+
+        except:
+            print("err")
+
+    con.commit()
+
+
+# getFileTitle
+def create_file_title():
+
+    title1 = ""
+    if form1.get() == "":
+        title1 += "key_word_all_"
+    else:
+        title1 += "key_" + form1.get() + "_"
+
+    title2 = ""
+    if form2.get() == "":
+        title2 += "hash_tag_all_"
+    else:
+        title2 += "#" + form2.get() + "_"
+
+    return title1 + title2 + str(datetime.date.today()) + ".txt"
+
+
+title = "リスト名"
+label3 = tk.Label(centerFrame, text=title)
+label3.pack(padx=5, pady=0, anchor=tk.W, side=LEFT)
+
+form3 = StringVar()
+entry = Entry(centerFrame, textvariable=form3, width=80).pack(padx=8, pady=5, anchor=tk.W, side=LEFT)
+
+
+form3.set(create_file_title())
+
+button2 = tk.Button(
+    centerFrame,
+    text="リスト作成",
+    command=button2_clicked)
+button2.pack(padx=5, pady=5, anchor=tk.W)
 
 
 # ****** TABLE *******
@@ -176,7 +261,8 @@ def callback(event):
 tree.bind("<Double-1>", callback)
 
 # Data set
-cursor.execute('SELECT * FROM SampleGetPostList  ORDER BY id ASC')
+query_pref = 'SELECT * FROM SampleGetPostList  ORDER BY id ASC'
+cursor.execute(query_pref)
 for row in cursor:
     try:
         dataId = row[0]
@@ -193,5 +279,4 @@ for row in cursor:
         print("err")
 
 con.commit()
-
 win.mainloop()

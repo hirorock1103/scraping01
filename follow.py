@@ -15,7 +15,7 @@ userIdList = list()
 likeUserIdList = list()
 unfollowUserIdList = list()
 # get data from file or database
-f = open(fPath + '/new_アメリカ_2019-04-04.txt', 'r')
+f = open(fPath + '/key_word_all_hash_tag_all_2019-04-11.txt', 'r')
 line = f.readline()
 while line:
     line = f.readline()
